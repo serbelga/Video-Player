@@ -29,6 +29,7 @@ namespace AplicacionGestures
         MediaPlayer mediaPlayer;
         MediaTimelineController mediaTimelineController;
         CompositeTransform ct = new CompositeTransform();
+        
         Rect sourceRect = new Rect(0, 0, 1, 1);
         Boolean controls = true;
 
@@ -64,8 +65,12 @@ namespace AplicacionGestures
 
             ct.ScaleX *= e.Delta.Scale;
             ct.ScaleY *= e.Delta.Scale;
-
-            ct.Rotation += e.Delta.Rotation;
+            
+            double rotation = Math.Max(-60, Math.Min(120, ct.Rotation + e.Delta.Rotation));
+            double rotationAux = rotation + 60;
+            double clockRate = rotationAux / 60;
+            mediaTimelineController.ClockRate = clockRate;
+            ct.Rotation = rotation;
 
             source.RenderTransform = ct;
         }
@@ -148,6 +153,10 @@ namespace AplicacionGestures
             {
                 mediaTimelineController.Pause();
             }
+            else
+            {
+                mediaTimelineController.Resume();
+            }
         }
 
         private void Pause_Click(object sender, RoutedEventArgs e)
@@ -160,8 +169,8 @@ namespace AplicacionGestures
 
         private void Repeat_Click(object sender, RoutedEventArgs e)
         {
-            //mediaTimelineController.Start();
-            mediaTimelineController.ClockRate = 2.0;
+            mediaTimelineController.Start();
+            //mediaTimelineController.ClockRate = 2.0;
         }
     }
 }

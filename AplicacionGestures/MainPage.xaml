@@ -22,6 +22,6 @@
                 <TextBlock Text="Título" Margin="12,14"/>
             </CommandBar.Content>
         </CommandBar>
-        <Image x:Name="image" HorizontalAlignment="Left" Height="100" Margin="440,267,0,0" VerticalAlignment="Top" Width="100" Source="/Assets/StoreLogo.png" ManipulationDelta="Image_ManipulationDelta"/>
+        <Image x:Name="image" HorizontalAlignment="Center" Height="253" Margin="0,0,0,0" VerticalAlignment="Center" Width="253" Source="/Assets/StoreLogo.png" ManipulationDelta="Image_ManipulationDelta"/>
     </Grid>
 </Page>
