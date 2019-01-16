@@ -39,7 +39,7 @@ namespace AplicacionGestures
         {
             this.InitializeComponent();
             this.image.ManipulationMode = ManipulationModes.Scale | ManipulationModes.Rotate;
-            this.volume.ManipulationMode = ManipulationModes.Scale;
+            this.volume.ManipulationMode = ManipulationModes.TranslateX;
             this.mediaPlayerElement.ManipulationMode = ManipulationModes.Scale | ManipulationModes.TranslateInertia | ManipulationModes.TranslateX | ManipulationModes.TranslateY;
             //ctv.ScaleY = 1.5;
             //this.volume.RenderTransform = ctv;
@@ -173,17 +173,24 @@ namespace AplicacionGestures
         private void Repeat_Click(object sender, RoutedEventArgs e)
         {
             mediaTimelineController.Start();
-            //mediaTimelineController.ClockRate = 2.0;
         }
 
         private void Volume_ManipulationDelta(object sender, ManipulationDeltaRoutedEventArgs e)
         {
             FrameworkElement source = (FrameworkElement)e.OriginalSource;
-
-            //ctv.ScaleX *= e.Delta.Scale;
-            ctv.ScaleY *= e.Delta.Scale;
-            //mediaPlayer.Volume *= e.Delta.Scale;
-            source.RenderTransform = ctv;
+            
+            GeneralTransform generalTransform = source.TransformToVisual(Window.Current.Content);
+            Point screenCoords = generalTransform.TransformPoint(new Point(0, 0));
+            double low = Window.Current.Content.RenderSize.Width * 0.2;
+            double high = Window.Current.Content.RenderSize.Width * 0.8;
+            double medium = (high + low) / 2 - low;
+            if (screenCoords.X + e.Delta.Translation.X > low && screenCoords.X + source.ActualWidth + e.Delta.Translation.X < high)
+            {
+                ctv.TranslateX += e.Delta.Translation.X;
+                source.RenderTransform = ctv;
+                double current = (screenCoords.X + source.ActualWidth / 2 - low) / medium;
+                mediaPlayer.Volume = current;
+            }
         }
     }
 }
