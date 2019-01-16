@@ -22,6 +22,8 @@
                 <TextBlock Text="Título" Margin="12,14"/>
             </CommandBar.Content>
         </CommandBar>
-        <Image x:Name="image" HorizontalAlignment="Center" Height="253" Margin="0,0,0,0" VerticalAlignment="Center" Width="253" Source="/Assets/StoreLogo.png" ManipulationDelta="Image_ManipulationDelta"/>
+        <Image x:Name="image" HorizontalAlignment="Center" Height="253" Margin="0,0,0,0" VerticalAlignment="Center" Width="253" Source="/Assets/Sin título-1.jpg" ManipulationDelta="Image_ManipulationDelta"/>
+        <Image x:Name="volume" HorizontalAlignment="Left" Height="238" Margin="634,62,0,0" VerticalAlignment="Top" Width="238" Source="/Assets/StoreLogo.png" ManipulationDelta="Volume_ManipulationDelta"/>
+        <Image x:Name="image1" HorizontalAlignment="Left" Height="100" Margin="141,500,0,0" VerticalAlignment="Top" Width="100"/>
     </Grid>
 </Page>

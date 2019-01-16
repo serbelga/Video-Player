@@ -29,7 +29,7 @@ namespace AplicacionGestures
         MediaPlayer mediaPlayer;
         MediaTimelineController mediaTimelineController;
         CompositeTransform ct = new CompositeTransform();
-        
+        CompositeTransform ctv = new CompositeTransform();
         Rect sourceRect = new Rect(0, 0, 1, 1);
         Boolean controls = true;
 
@@ -39,7 +39,10 @@ namespace AplicacionGestures
         {
             this.InitializeComponent();
             this.image.ManipulationMode = ManipulationModes.Scale | ManipulationModes.Rotate;
+            this.volume.ManipulationMode = ManipulationModes.Scale;
             this.mediaPlayerElement.ManipulationMode = ManipulationModes.Scale | ManipulationModes.TranslateInertia | ManipulationModes.TranslateX | ManipulationModes.TranslateY;
+            //ctv.ScaleY = 1.5;
+            //this.volume.RenderTransform = ctv;
             mediaPlayer = new MediaPlayer();
             mediaTimelineController = new MediaTimelineController();
             mediaPlayerElement.Source = MediaSource.CreateFromUri(new Uri("ms-appx:///Assets/sample.mp4"));
@@ -171,6 +174,16 @@ namespace AplicacionGestures
         {
             mediaTimelineController.Start();
             //mediaTimelineController.ClockRate = 2.0;
+        }
+
+        private void Volume_ManipulationDelta(object sender, ManipulationDeltaRoutedEventArgs e)
+        {
+            FrameworkElement source = (FrameworkElement)e.OriginalSource;
+
+            //ctv.ScaleX *= e.Delta.Scale;
+            ctv.ScaleY *= e.Delta.Scale;
+            //mediaPlayer.Volume *= e.Delta.Scale;
+            source.RenderTransform = ctv;
         }
     }
 }
