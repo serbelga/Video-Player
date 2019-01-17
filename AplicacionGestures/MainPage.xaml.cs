@@ -15,9 +15,8 @@ using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
+using Windows.UI.Xaml.Media.Imaging;
 using Windows.UI.Xaml.Navigation;
-
-// La plantilla de elemento Página en blanco está documentada en https://go.microsoft.com/fwlink/?LinkId=402352&clcid=0xc0a
 
 namespace AplicacionGestures
 {
@@ -31,7 +30,7 @@ namespace AplicacionGestures
         CompositeTransform ct = new CompositeTransform();
         CompositeTransform ctv = new CompositeTransform();
         Rect sourceRect = new Rect(0, 0, 1, 1);
-        Boolean controls = true;
+        BitmapImage volumeUp, volumeDown;
 
 
 
@@ -50,6 +49,10 @@ namespace AplicacionGestures
             mediaPlayer.CommandManager.IsEnabled = false;
             mediaPlayer.TimelineController = mediaTimelineController;
             mediaTimelineController.IsLoopingEnabled = true;
+
+            volumeDown = new BitmapImage(new Uri("ms-appx:///Assets/baseline_volume_down_white_48dp.png"));
+        
+            volumeUp = new BitmapImage(new Uri("ms-appx:///Assets/baseline_volume_up_white_48dp.png"));
         }
 
    
@@ -184,6 +187,7 @@ namespace AplicacionGestures
             double low = Window.Current.Content.RenderSize.Width * 0.2;
             double high = Window.Current.Content.RenderSize.Width * 0.8;
             double medium = (high + low) / 2 - low;
+            double mediatrix = (high + low) / 2;
             if (screenCoords.X + e.Delta.Translation.X > low && screenCoords.X + source.ActualWidth + e.Delta.Translation.X < high)
             {
                 ctv.TranslateX += e.Delta.Translation.X;
@@ -191,6 +195,16 @@ namespace AplicacionGestures
                 double current = (screenCoords.X + source.ActualWidth / 2 - low) / medium;
                 mediaPlayer.Volume = current;
             }
+            if (screenCoords.X + e.Delta.Translation.X < mediatrix)
+            {
+                //volume.Source = volumeDown;
+                volume.Text = "\xE992";
+            } else
+            {
+                //volume.Source = volumeUp;
+                volume.Text = "\xE995";
+            }
+
         }
     }
 }
