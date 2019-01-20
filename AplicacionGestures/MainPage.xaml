@@ -9,7 +9,7 @@
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
     <Grid>
-        <MediaPlayerElement x:Name="mediaPlayerElement" AreTransportControlsEnabled="False" HorizontalAlignment="Stretch"  Grid.Row="0" PointerPressed="_mediaPlayerElement_PointerPressed" ManipulationDelta="_mediaPlayerElement_ManipulationDelta" DoubleTapped="MediaPlayerElement_DoubleTapped" Holding="MediaPlayerElement_Holding"/>
+        <MediaPlayerElement x:Name="mediaPlayerElement" AreTransportControlsEnabled="False" HorizontalAlignment="Stretch"  Grid.Row="0" PointerPressed="_mediaPlayerElement_PointerPressed" ManipulationDelta="_mediaPlayerElement_ManipulationDelta" DoubleTapped="MediaPlayerElement_DoubleTapped" Holding="MediaPlayerElement_Holding" FontFamily="Segoe UI"/>
 
         <CommandBar x:Name="commandBar" RequestedTheme="Dark" Background="#BF1F1F1F">
             <AppBarToggleButton x:Name="repeat" Icon="RepeatAll" Label="Volver a reproducir" Click="Repeat_Click"/>
@@ -22,8 +22,14 @@
                 <TextBlock Text="Título" Margin="12,14"/>
             </CommandBar.Content>
         </CommandBar>
-        <Image x:Name="speed" HorizontalAlignment="Center" Height="99" Margin="0,200,0,0" VerticalAlignment="Top" Width="100" Source="/Assets/Sin título-1.png" ManipulationDelta="Image_ManipulationDelta"/>
-        <TextBlock x:Name="volume" Text="&#xE992;" FontFamily="Segoe MDL2 Assets" HorizontalAlignment="Center" VerticalAlignment="Top" FontSize="72" ManipulationDelta="Volume_ManipulationDelta" Foreground="#FFD4D4D4" Margin="0,87,0,0"></TextBlock>
+        <Grid x:Name="controlsPanel" HorizontalAlignment="Center" Height="402" Margin="0,98,0,0" VerticalAlignment="Top" Background="#7F000000" MinWidth="320" MaxWidth="2100" Width="962">
+            <Image x:Name="speed" HorizontalAlignment="Center" Height="99" Margin="0,200,0,0" VerticalAlignment="Top" Width="100" Source="/Assets/Sin título-1.png" ManipulationDelta="Image_ManipulationDelta"/>
+            <TextBlock x:Name="volume" Text="&#xE992;" FontFamily="Segoe MDL2 Assets" HorizontalAlignment="Center" VerticalAlignment="Top" FontSize="72" ManipulationDelta="Volume_ManipulationDelta" Foreground="#FFD4D4D4" Margin="0,87,0,0"></TextBlock>
+            <TextBlock x:Name="speedText" HorizontalAlignment="Center" Margin="0,304,0,0" Text="1.0x" TextWrapping="Wrap" VerticalAlignment="Top" TextAlignment="Center" FocusVisualPrimaryBrush="Black" FontFamily="Segoe UI" FontWeight="Bold" FontSize="14" Foreground="White"/>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+        </Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition/>
         </Grid.ColumnDefinitions>

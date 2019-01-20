@@ -20,9 +20,7 @@ using Windows.UI.Xaml.Navigation;
 
 namespace AplicacionGestures
 {
-    /// <summary>
-    /// Página vacía que se puede usar de forma independiente o a la que se puede navegar dentro de un objeto Frame.
-    /// </summary>
+    
     public sealed partial class MainPage : Page
     {
         MediaPlayer mediaPlayer;
@@ -30,13 +28,12 @@ namespace AplicacionGestures
         CompositeTransform ct = new CompositeTransform();
         CompositeTransform ctv = new CompositeTransform();
         Rect sourceRect = new Rect(0, 0, 1, 1);
-
-
+        Boolean controlsVisibility = false;
 
         public MainPage()
         {
             this.InitializeComponent();
-            this.speed.ManipulationMode = ManipulationModes.Scale | ManipulationModes.Rotate;
+            this.speed.ManipulationMode = ManipulationModes.Rotate;
             this.volume.ManipulationMode = ManipulationModes.TranslateX;
             this.mediaPlayerElement.ManipulationMode = ManipulationModes.Scale | ManipulationModes.TranslateInertia | ManipulationModes.TranslateX | ManipulationModes.TranslateY;
             mediaPlayer = new MediaPlayer();
@@ -46,10 +43,10 @@ namespace AplicacionGestures
             mediaPlayer.CommandManager.IsEnabled = false;
             mediaPlayer.TimelineController = mediaTimelineController;
             mediaTimelineController.IsLoopingEnabled = true;
+
+            this.controlsPanel.Width = Window.Current.Bounds.Width * 0.9 - Window.Current.Bounds.Width * 0.1;
         }
 
-   
-    
         private void AppBarButton_Click(object sender, RoutedEventArgs e)
         {
             mediaPlayer.PlaybackSession.PlaybackRate = 1.0;
@@ -61,14 +58,12 @@ namespace AplicacionGestures
             
             ct.CenterX = source.ActualWidth / 2.0;
             ct.CenterY = source.ActualHeight / 2.0;
-
-            ct.ScaleX *= e.Delta.Scale;
-            ct.ScaleY *= e.Delta.Scale;
             
             double rotation = Math.Max(-60, Math.Min(120, ct.Rotation + e.Delta.Rotation));
             double rotationAux = rotation + 60;
             double clockRate = rotationAux / 60;
             mediaTimelineController.ClockRate = clockRate;
+            this.speedText.Text = clockRate.ToString("0.0") + "x";
             ct.Rotation = rotation;
 
             source.RenderTransform = ct;
@@ -84,14 +79,20 @@ namespace AplicacionGestures
 
         private void _mediaPlayerElement_PointerPressed(object sender, PointerRoutedEventArgs e)
         {
-            if (this.commandBar.Visibility.Equals(Visibility.Collapsed))
+            if (!controlsVisibility)
             {
+                this.controlsPanel.Visibility = Visibility.Visible;
                 this.commandBar.Visibility = Visibility.Visible;
-                this.volume.Visibility = Visibility.Visible;
+                //this.volume.Visibility = Visibility.Visible;
+                //this.speed.Visibility = Visibility.Visible;
+                controlsVisibility = true;
             } else
             {
+                this.controlsPanel.Visibility = Visibility.Collapsed;
                 this.commandBar.Visibility = Visibility.Collapsed;
-                this.volume.Visibility = Visibility.Collapsed;
+                //this.volume.Visibility = Visibility.Collapsed;
+                //this.speed.Visibility = Visibility.Collapsed;
+                controlsVisibility = false;
             }
         }
 
