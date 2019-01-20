@@ -30,18 +30,15 @@ namespace AplicacionGestures
         CompositeTransform ct = new CompositeTransform();
         CompositeTransform ctv = new CompositeTransform();
         Rect sourceRect = new Rect(0, 0, 1, 1);
-        BitmapImage volumeUp, volumeDown;
 
 
 
         public MainPage()
         {
             this.InitializeComponent();
-            this.image.ManipulationMode = ManipulationModes.Scale | ManipulationModes.Rotate;
+            this.speed.ManipulationMode = ManipulationModes.Scale | ManipulationModes.Rotate;
             this.volume.ManipulationMode = ManipulationModes.TranslateX;
             this.mediaPlayerElement.ManipulationMode = ManipulationModes.Scale | ManipulationModes.TranslateInertia | ManipulationModes.TranslateX | ManipulationModes.TranslateY;
-            //ctv.ScaleY = 1.5;
-            //this.volume.RenderTransform = ctv;
             mediaPlayer = new MediaPlayer();
             mediaTimelineController = new MediaTimelineController();
             mediaPlayerElement.Source = MediaSource.CreateFromUri(new Uri("ms-appx:///Assets/sample.mp4"));
@@ -49,10 +46,6 @@ namespace AplicacionGestures
             mediaPlayer.CommandManager.IsEnabled = false;
             mediaPlayer.TimelineController = mediaTimelineController;
             mediaTimelineController.IsLoopingEnabled = true;
-
-            volumeDown = new BitmapImage(new Uri("ms-appx:///Assets/baseline_volume_down_white_48dp.png"));
-        
-            volumeUp = new BitmapImage(new Uri("ms-appx:///Assets/baseline_volume_up_white_48dp.png"));
         }
 
    
@@ -94,9 +87,11 @@ namespace AplicacionGestures
             if (this.commandBar.Visibility.Equals(Visibility.Collapsed))
             {
                 this.commandBar.Visibility = Visibility.Visible;
+                this.volume.Visibility = Visibility.Visible;
             } else
             {
                 this.commandBar.Visibility = Visibility.Collapsed;
+                this.volume.Visibility = Visibility.Collapsed;
             }
         }
 
@@ -197,14 +192,11 @@ namespace AplicacionGestures
             }
             if (screenCoords.X + e.Delta.Translation.X < mediatrix)
             {
-                //volume.Source = volumeDown;
                 volume.Text = "\xE992";
             } else
             {
-                //volume.Source = volumeUp;
                 volume.Text = "\xE995";
             }
-
         }
     }
 }

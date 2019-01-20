@@ -131,10 +131,8 @@
     <None Include="AplicacionGestures_TemporaryKey.pfx" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Assets\baseline_volume_down_white_48dp.png" />
-    <Content Include="Assets\baseline_volume_up_white_48dp.png" />
     <Content Include="Assets\sample.mp4" />
-    <Content Include="Assets\Sin título-1.jpg" />
+    <Content Include="Assets\Sin título-1.png" />
     <Content Include="Assets\stairway_to_heaven.mp3" />
     <Content Include="Properties\Default.rd.xml" />
     <Content Include="Assets\LockScreenLogo.scale-200.png" />

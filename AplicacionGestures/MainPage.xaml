@@ -22,8 +22,8 @@
                 <TextBlock Text="Título" Margin="12,14"/>
             </CommandBar.Content>
         </CommandBar>
-        <Image x:Name="image" HorizontalAlignment="Left" Height="253" Margin="209,87,0,0" VerticalAlignment="Top" Width="253" Source="/Assets/Sin título-1.jpg" ManipulationDelta="Image_ManipulationDelta"/>
-        <TextBlock x:Name="volume" Text="&#xE992;" FontFamily="Segoe MDL2 Assets" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="72" ManipulationDelta="Volume_ManipulationDelta" Foreground="#FFD4D4D4"></TextBlock>
+        <Image x:Name="speed" HorizontalAlignment="Center" Height="99" Margin="0,200,0,0" VerticalAlignment="Top" Width="100" Source="/Assets/Sin título-1.png" ManipulationDelta="Image_ManipulationDelta"/>
+        <TextBlock x:Name="volume" Text="&#xE992;" FontFamily="Segoe MDL2 Assets" HorizontalAlignment="Center" VerticalAlignment="Top" FontSize="72" ManipulationDelta="Volume_ManipulationDelta" Foreground="#FFD4D4D4" Margin="0,87,0,0"></TextBlock>
         <Grid.ColumnDefinitions>
             <ColumnDefinition/>
         </Grid.ColumnDefinitions>
