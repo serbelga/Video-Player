@@ -29,7 +29,7 @@ namespace AplicacionGestures
         CompositeTransform ctv = new CompositeTransform();
         Rect sourceRect = new Rect(0, 0, 1, 1);
         Boolean controlsVisibility = false;
-
+        public event WindowSizeChangedEventHandler SizeChanged;
         public MainPage()
         {
             this.InitializeComponent();
@@ -43,9 +43,17 @@ namespace AplicacionGestures
             mediaPlayer.CommandManager.IsEnabled = false;
             mediaPlayer.TimelineController = mediaTimelineController;
             mediaTimelineController.IsLoopingEnabled = true;
+            OnResize();
+            
+            SizeChanged = new WindowSizeChangedEventHandler((o, e) => OnResize());
+            Window.Current.SizeChanged += SizeChanged;
+        }
 
+        public void OnResize()
+        {
             this.controlsPanel.Width = Window.Current.Bounds.Width * 0.9 - Window.Current.Bounds.Width * 0.1;
         }
+
 
         private void AppBarButton_Click(object sender, RoutedEventArgs e)
         {
@@ -151,11 +159,11 @@ namespace AplicacionGestures
 
         private void MediaPlayerElement_Holding(object sender, HoldingRoutedEventArgs e)
         {
-            if (mediaTimelineController.State == MediaTimelineControllerState.Running)
+            if (mediaTimelineController.State == MediaTimelineControllerState.Running && e.HoldingState == Windows.UI.Input.HoldingState.Started)
             {
                 mediaTimelineController.Pause();
             }
-            else
+            else if (e.HoldingState == Windows.UI.Input.HoldingState.Started)
             {
                 mediaTimelineController.Resume();
             }
@@ -188,8 +196,9 @@ namespace AplicacionGestures
             {
                 ctv.TranslateX += e.Delta.Translation.X;
                 source.RenderTransform = ctv;
-                double current = (screenCoords.X + source.ActualWidth / 2 - low) / medium;
+                double current = (screenCoords.X - low)  / medium;
                 mediaPlayer.Volume = current;
+                volumeText.Text = current.ToString("0.0");
             }
             if (screenCoords.X + e.Delta.Translation.X < mediatrix)
             {
