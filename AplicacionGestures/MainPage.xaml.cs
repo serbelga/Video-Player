@@ -243,6 +243,7 @@ namespace AplicacionGestures
                 StorageFile file = await openPicker.PickSingleFileAsync();
                 if (file != null)
                 {
+                    mediaTimelineController.Start();
                     SetVideoTitle(file);
                     mediaPlayerElement.Source = MediaSource.CreateFromStorageFile(file);
                 }
