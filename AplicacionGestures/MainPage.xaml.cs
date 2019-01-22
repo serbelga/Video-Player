@@ -9,6 +9,8 @@ using Windows.Foundation.Collections;
 using Windows.Media;
 using Windows.Media.Core;
 using Windows.Media.Playback;
+using Windows.Storage;
+using Windows.Storage.FileProperties;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -30,6 +32,7 @@ namespace AplicacionGestures
         Rect sourceRect = new Rect(0, 0, 1, 1);
         Boolean controlsVisibility = false;
         public event WindowSizeChangedEventHandler SizeChanged;
+
         public MainPage()
         {
             this.InitializeComponent();
@@ -37,21 +40,55 @@ namespace AplicacionGestures
             this.volume.ManipulationMode = ManipulationModes.TranslateX;
             this.mediaPlayerElement.ManipulationMode = ManipulationModes.Scale | ManipulationModes.TranslateInertia | ManipulationModes.TranslateX | ManipulationModes.TranslateY;
             mediaPlayer = new MediaPlayer();
+            
             mediaTimelineController = new MediaTimelineController();
             mediaPlayerElement.Source = MediaSource.CreateFromUri(new Uri("ms-appx:///Assets/sample.mp4"));
             mediaPlayer = mediaPlayerElement.MediaPlayer;
             mediaPlayer.CommandManager.IsEnabled = false;
             mediaPlayer.TimelineController = mediaTimelineController;
             mediaTimelineController.IsLoopingEnabled = true;
+            mediaPlayer.Volume = 0.5;
+
+            InitializePropertiesAsync();
+            
+
             OnResize();
             
             SizeChanged = new WindowSizeChangedEventHandler((o, e) => OnResize());
             Window.Current.SizeChanged += SizeChanged;
         }
 
+        public async void InitializePropertiesAsync()
+        {
+            try
+            {
+                StorageFile storageFile = await StorageFile.GetFileFromApplicationUriAsync(new Uri("ms-appx:///Assets/sample.mp4"));
+                if (storageFile != null)
+                {
+                    VideoProperties videoProperties = await storageFile.Properties.GetVideoPropertiesAsync();
+                    title.Text = videoProperties.Title;
+                }
+            } catch (FileNotFoundException)
+            {
+                title.Text = "Título";
+            }
+            
+        }
+
         public void OnResize()
         {
             this.controlsPanel.Width = Window.Current.Bounds.Width * 0.9 - Window.Current.Bounds.Width * 0.1;
+            GeneralTransform generalTransform = this.volume.TransformToVisual(Window.Current.Content);
+            Point screenCoords = generalTransform.TransformPoint(new Point(0, 0));
+            
+
+            double low = Window.Current.Bounds.Width * 0.2;
+            double high = Window.Current.Bounds.Width * 0.8;
+            double mediatrix = (high + low) / 2;
+            double length = high - low;
+            double screenCoordsX = mediaPlayer.Volume * length + low;
+            double posX = screenCoordsX - mediatrix;
+            ctv.TranslateX = posX;
         }
 
 
@@ -190,13 +227,13 @@ namespace AplicacionGestures
             Point screenCoords = generalTransform.TransformPoint(new Point(0, 0));
             double low = Window.Current.Content.RenderSize.Width * 0.2;
             double high = Window.Current.Content.RenderSize.Width * 0.8;
-            double medium = (high + low) / 2 - low;
             double mediatrix = (high + low) / 2;
+            double medium = mediatrix - low;
             if (screenCoords.X + e.Delta.Translation.X > low && screenCoords.X + source.ActualWidth + e.Delta.Translation.X < high)
             {
                 ctv.TranslateX += e.Delta.Translation.X;
                 source.RenderTransform = ctv;
-                double current = (screenCoords.X - low)  / medium;
+                double current = ((screenCoords.X + source.ActualWidth / 2) - low) / (high - low);
                 mediaPlayer.Volume = current;
                 volumeText.Text = current.ToString("0.0");
             }
