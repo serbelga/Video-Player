@@ -261,7 +261,7 @@ namespace AplicacionGestures
         /**
          * Speed Manipulation
          */
-        private void Image_ManipulationDelta(object sender, ManipulationDeltaRoutedEventArgs e)
+        private void Speed_ManipulationDelta(object sender, ManipulationDeltaRoutedEventArgs e)
         {
             FrameworkElement source = (FrameworkElement)e.OriginalSource;
 
