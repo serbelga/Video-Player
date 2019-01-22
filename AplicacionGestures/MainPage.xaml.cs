@@ -11,6 +11,7 @@ using Windows.Media.Core;
 using Windows.Media.Playback;
 using Windows.Storage;
 using Windows.Storage.FileProperties;
+using Windows.Storage.Pickers;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -22,7 +23,7 @@ using Windows.UI.Xaml.Navigation;
 
 namespace AplicacionGestures
 {
-    
+
     public sealed partial class MainPage : Page
     {
         MediaPlayer mediaPlayer;
@@ -40,7 +41,6 @@ namespace AplicacionGestures
             this.volume.ManipulationMode = ManipulationModes.TranslateX;
             this.mediaPlayerElement.ManipulationMode = ManipulationModes.Scale | ManipulationModes.TranslateInertia | ManipulationModes.TranslateX | ManipulationModes.TranslateY;
             mediaPlayer = new MediaPlayer();
-            
             mediaTimelineController = new MediaTimelineController();
             mediaPlayerElement.Source = MediaSource.CreateFromUri(new Uri("ms-appx:///Assets/sample.mp4"));
             mediaPlayer = mediaPlayerElement.MediaPlayer;
@@ -48,12 +48,8 @@ namespace AplicacionGestures
             mediaPlayer.TimelineController = mediaTimelineController;
             mediaTimelineController.IsLoopingEnabled = true;
             mediaPlayer.Volume = 0.5;
-
             InitializePropertiesAsync();
-            
-
             OnResize();
-            
             SizeChanged = new WindowSizeChangedEventHandler((o, e) => OnResize());
             Window.Current.SizeChanged += SizeChanged;
         }
@@ -65,14 +61,29 @@ namespace AplicacionGestures
                 StorageFile storageFile = await StorageFile.GetFileFromApplicationUriAsync(new Uri("ms-appx:///Assets/sample.mp4"));
                 if (storageFile != null)
                 {
-                    VideoProperties videoProperties = await storageFile.Properties.GetVideoPropertiesAsync();
-                    title.Text = videoProperties.Title;
+                    SetVideoTitle(storageFile);
                 }
-            } catch (FileNotFoundException)
+            }
+            catch (FileNotFoundException)
             {
                 title.Text = "Título";
             }
-            
+
+        }
+
+        public async void SetVideoTitle(StorageFile storageFile)
+        {
+            if (storageFile != null)
+            {
+                VideoProperties videoProperties = await storageFile.Properties.GetVideoPropertiesAsync();
+                if (videoProperties.Title == "")
+                {
+                    title.Text = storageFile.Name;
+                } else
+                {
+                    title.Text = videoProperties.Title;
+                }
+            }
         }
 
         public void OnResize()
@@ -80,7 +91,7 @@ namespace AplicacionGestures
             this.controlsPanel.Width = Window.Current.Bounds.Width * 0.9 - Window.Current.Bounds.Width * 0.1;
             GeneralTransform generalTransform = this.volume.TransformToVisual(Window.Current.Content);
             Point screenCoords = generalTransform.TransformPoint(new Point(0, 0));
-            
+
 
             double low = Window.Current.Bounds.Width * 0.2;
             double high = Window.Current.Bounds.Width * 0.8;
@@ -99,11 +110,11 @@ namespace AplicacionGestures
 
         private void Image_ManipulationDelta(object sender, ManipulationDeltaRoutedEventArgs e)
         {
-            FrameworkElement source = (FrameworkElement) e.OriginalSource;
-            
+            FrameworkElement source = (FrameworkElement)e.OriginalSource;
+
             ct.CenterX = source.ActualWidth / 2.0;
             ct.CenterY = source.ActualHeight / 2.0;
-            
+
             double rotation = Math.Max(-60, Math.Min(120, ct.Rotation + e.Delta.Rotation));
             double rotationAux = rotation + 60;
             double clockRate = rotationAux / 60;
@@ -114,6 +125,9 @@ namespace AplicacionGestures
             source.RenderTransform = ct;
         }
 
+        /**
+         * Action launched on Play Button
+         */
         private void Play_Click(object sender, RoutedEventArgs e)
         {
             if (mediaTimelineController.State != MediaTimelineControllerState.Running)
@@ -122,21 +136,21 @@ namespace AplicacionGestures
             }
         }
 
+        /**
+         * Called when Pointer is Pressed on Media Player Element
+         */
         private void _mediaPlayerElement_PointerPressed(object sender, PointerRoutedEventArgs e)
         {
             if (!controlsVisibility)
             {
                 this.controlsPanel.Visibility = Visibility.Visible;
                 this.commandBar.Visibility = Visibility.Visible;
-                //this.volume.Visibility = Visibility.Visible;
-                //this.speed.Visibility = Visibility.Visible;
                 controlsVisibility = true;
-            } else
+            }
+            else
             {
                 this.controlsPanel.Visibility = Visibility.Collapsed;
                 this.commandBar.Visibility = Visibility.Collapsed;
-                //this.volume.Visibility = Visibility.Collapsed;
-                //this.speed.Visibility = Visibility.Collapsed;
                 controlsVisibility = false;
             }
         }
@@ -144,7 +158,7 @@ namespace AplicacionGestures
         /**
          * Escalado y movimiento del elemento de vídeo
          * Basado en el código disponible en los documentos de la librería del elemento MediaPlayer
-         */ 
+         */
         private void _mediaPlayerElement_ManipulationDelta(object sender, ManipulationDeltaRoutedEventArgs e)
         {
             //Diferente de 1 -> Escalando
@@ -187,6 +201,9 @@ namespace AplicacionGestures
             mediaPlayer.PlaybackSession.NormalizedSourceRect = sourceRect;
         }
 
+        /**
+         * 
+         */
         private void MediaPlayerElement_DoubleTapped(object sender, DoubleTappedRoutedEventArgs e)
         {
             //Reset del tamaño del fotograma de vídeo
@@ -218,11 +235,10 @@ namespace AplicacionGestures
         {
             mediaTimelineController.Start();
         }
-
+        
         private void Volume_ManipulationDelta(object sender, ManipulationDeltaRoutedEventArgs e)
         {
-            FrameworkElement source = (FrameworkElement)e.OriginalSource;
-            
+            FrameworkElement source = (FrameworkElement) e.OriginalSource;
             GeneralTransform generalTransform = source.TransformToVisual(Window.Current.Content);
             Point screenCoords = generalTransform.TransformPoint(new Point(0, 0));
             double low = Window.Current.Content.RenderSize.Width * 0.2;
@@ -237,13 +253,61 @@ namespace AplicacionGestures
                 mediaPlayer.Volume = current;
                 volumeText.Text = current.ToString("0.0");
             }
-            if (screenCoords.X + e.Delta.Translation.X < mediatrix)
+            ModifyVolumeIcon();
+        }
+
+        /**
+         * Modifies Volume icon by the current Level
+         */ 
+        private void ModifyVolumeIcon()
+        {
+            if (mediaPlayer.Volume < 0.1)
             {
                 volume.Text = "\xE992";
-            } else
+            }
+            else if (mediaPlayer.Volume >= 0.1 && mediaPlayer.Volume < 0.3)
+            {
+                volume.Text = "\xE993";
+            }
+            else if (mediaPlayer.Volume >= 0.3 && mediaPlayer.Volume < 0.6)
+            {
+                volume.Text = "\xE994";
+            }
+            else
             {
                 volume.Text = "\xE995";
             }
         }
+
+        /**
+         * Open video file
+         */ 
+        private async void Open_Click(object sender, RoutedEventArgs e)
+        {
+            FileOpenPicker openPicker = new FileOpenPicker();
+            openPicker.FileTypeFilter.Add(".mp4");
+            openPicker.FileTypeFilter.Add(".mkv");
+            try
+            {
+                StorageFile file = await openPicker.PickSingleFileAsync();
+                if (file != null)
+                {
+                    SetVideoTitle(file);
+                    mediaPlayerElement.Source = MediaSource.CreateFromStorageFile(file);
+                }
+                else
+                {
+                    
+
+                }
+            } catch (IOException)
+            {
+
+            }
+        }
     }
 }
+
+
+
+
