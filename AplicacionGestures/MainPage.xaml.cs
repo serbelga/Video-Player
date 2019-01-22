@@ -70,22 +70,10 @@ namespace AplicacionGestures
             }
 
         }
-
-        public async void SetVideoTitle(StorageFile storageFile)
-        {
-            if (storageFile != null)
-            {
-                VideoProperties videoProperties = await storageFile.Properties.GetVideoPropertiesAsync();
-                if (videoProperties.Title == "")
-                {
-                    title.Text = storageFile.Name;
-                } else
-                {
-                    title.Text = videoProperties.Title;
-                }
-            }
-        }
-
+        
+        /**
+         * OnResize Event
+         */ 
         public void OnResize()
         {
             this.controlsPanel.Width = Window.Current.Bounds.Width * 0.9 - Window.Current.Bounds.Width * 0.1;
@@ -101,43 +89,9 @@ namespace AplicacionGestures
             double posX = screenCoordsX - mediatrix;
             ctv.TranslateX = posX;
         }
-
-
-        private void AppBarButton_Click(object sender, RoutedEventArgs e)
-        {
-            mediaPlayer.PlaybackSession.PlaybackRate = 1.0;
-        }
-
-        private void Image_ManipulationDelta(object sender, ManipulationDeltaRoutedEventArgs e)
-        {
-            FrameworkElement source = (FrameworkElement)e.OriginalSource;
-
-            ct.CenterX = source.ActualWidth / 2.0;
-            ct.CenterY = source.ActualHeight / 2.0;
-
-            double rotation = Math.Max(-60, Math.Min(120, ct.Rotation + e.Delta.Rotation));
-            double rotationAux = rotation + 60;
-            double clockRate = rotationAux / 60;
-            mediaTimelineController.ClockRate = clockRate;
-            this.speedText.Text = clockRate.ToString("0.0") + "x";
-            ct.Rotation = rotation;
-
-            source.RenderTransform = ct;
-        }
-
+        
         /**
-         * Action launched on Play Button
-         */
-        private void Play_Click(object sender, RoutedEventArgs e)
-        {
-            if (mediaTimelineController.State != MediaTimelineControllerState.Running)
-            {
-                mediaTimelineController.Resume();
-            }
-        }
-
-        /**
-         * Called when Pointer is Pressed on Media Player Element
+         * MediaPlayerElement Pointer Pressed Event
          */
         private void _mediaPlayerElement_PointerPressed(object sender, PointerRoutedEventArgs e)
         {
@@ -202,7 +156,7 @@ namespace AplicacionGestures
         }
 
         /**
-         * 
+         * MediaPlayerElement Double Tapped Event
          */
         private void MediaPlayerElement_DoubleTapped(object sender, DoubleTappedRoutedEventArgs e)
         {
@@ -211,6 +165,9 @@ namespace AplicacionGestures
             mediaPlayer.PlaybackSession.NormalizedSourceRect = sourceRect;
         }
 
+        /**
+         * MediaPlayerElement Holding Event
+         */ 
         private void MediaPlayerElement_Holding(object sender, HoldingRoutedEventArgs e)
         {
             if (mediaTimelineController.State == MediaTimelineControllerState.Running && e.HoldingState == Windows.UI.Input.HoldingState.Started)
@@ -222,7 +179,49 @@ namespace AplicacionGestures
                 mediaTimelineController.Resume();
             }
         }
+        
+        //CommandBar
+        /**
+         * Video Title
+         */ 
+        public async void SetVideoTitle(StorageFile storageFile)
+        {
+            if (storageFile != null)
+            {
+                VideoProperties videoProperties = await storageFile.Properties.GetVideoPropertiesAsync();
+                if (videoProperties.Title == "")
+                {
+                    title.Text = storageFile.Name;
+                }
+                else
+                {
+                    title.Text = videoProperties.Title;
+                }
+            }
+        }
 
+        /**
+         * Repeat Button
+         */
+        private void Repeat_Click(object sender, RoutedEventArgs e)
+        {
+            mediaTimelineController.Start();
+        }
+
+        /**
+         * Play Button
+         */
+        private void Play_Click(object sender, RoutedEventArgs e)
+        {
+            if (mediaTimelineController.State != MediaTimelineControllerState.Running)
+            {
+                mediaTimelineController.Resume();
+            }
+        }
+
+        /**
+         * Pause Button
+         */
         private void Pause_Click(object sender, RoutedEventArgs e)
         {
             if (mediaTimelineController.State == MediaTimelineControllerState.Running)
@@ -231,57 +230,9 @@ namespace AplicacionGestures
             }
         }
 
-        private void Repeat_Click(object sender, RoutedEventArgs e)
-        {
-            mediaTimelineController.Start();
-        }
-        
-        private void Volume_ManipulationDelta(object sender, ManipulationDeltaRoutedEventArgs e)
-        {
-            FrameworkElement source = (FrameworkElement) e.OriginalSource;
-            GeneralTransform generalTransform = source.TransformToVisual(Window.Current.Content);
-            Point screenCoords = generalTransform.TransformPoint(new Point(0, 0));
-            double low = Window.Current.Content.RenderSize.Width * 0.2;
-            double high = Window.Current.Content.RenderSize.Width * 0.8;
-            double mediatrix = (high + low) / 2;
-            double medium = mediatrix - low;
-            if (screenCoords.X + e.Delta.Translation.X > low && screenCoords.X + source.ActualWidth + e.Delta.Translation.X < high)
-            {
-                ctv.TranslateX += e.Delta.Translation.X;
-                source.RenderTransform = ctv;
-                double current = ((screenCoords.X + source.ActualWidth / 2) - low) / (high - low);
-                mediaPlayer.Volume = current;
-                volumeText.Text = current.ToString("0.0");
-            }
-            ModifyVolumeIcon();
-        }
-
         /**
-         * Modifies Volume icon by the current Level
-         */ 
-        private void ModifyVolumeIcon()
-        {
-            if (mediaPlayer.Volume < 0.1)
-            {
-                volume.Text = "\xE992";
-            }
-            else if (mediaPlayer.Volume >= 0.1 && mediaPlayer.Volume < 0.3)
-            {
-                volume.Text = "\xE993";
-            }
-            else if (mediaPlayer.Volume >= 0.3 && mediaPlayer.Volume < 0.6)
-            {
-                volume.Text = "\xE994";
-            }
-            else
-            {
-                volume.Text = "\xE995";
-            }
-        }
-
-        /**
-         * Open video file
-         */ 
+         * Open Button
+         */
         private async void Open_Click(object sender, RoutedEventArgs e)
         {
             FileOpenPicker openPicker = new FileOpenPicker();
@@ -303,6 +254,72 @@ namespace AplicacionGestures
             } catch (IOException)
             {
 
+            }
+        }
+
+        /**
+         * Speed Manipulation
+         */
+        private void Image_ManipulationDelta(object sender, ManipulationDeltaRoutedEventArgs e)
+        {
+            FrameworkElement source = (FrameworkElement)e.OriginalSource;
+
+            ct.CenterX = source.ActualWidth / 2.0;
+            ct.CenterY = source.ActualHeight / 2.0;
+
+            double rotation = Math.Max(-60, Math.Min(120, ct.Rotation + e.Delta.Rotation));
+            double rotationAux = rotation + 60;
+            double clockRate = rotationAux / 60;
+            mediaTimelineController.ClockRate = clockRate;
+            this.speedText.Text = clockRate.ToString("0.0") + "x";
+            ct.Rotation = rotation;
+
+            source.RenderTransform = ct;
+        }
+
+        /**
+         * Volume Manipulation
+         */ 
+        private void Volume_ManipulationDelta(object sender, ManipulationDeltaRoutedEventArgs e)
+        {
+            FrameworkElement source = (FrameworkElement)e.OriginalSource;
+            GeneralTransform generalTransform = source.TransformToVisual(Window.Current.Content);
+            Point screenCoords = generalTransform.TransformPoint(new Point(0, 0));
+            double low = Window.Current.Content.RenderSize.Width * 0.2;
+            double high = Window.Current.Content.RenderSize.Width * 0.8;
+            double mediatrix = (high + low) / 2;
+            double medium = mediatrix - low;
+            if (screenCoords.X + e.Delta.Translation.X > low && screenCoords.X + source.ActualWidth + e.Delta.Translation.X < high)
+            {
+                ctv.TranslateX += e.Delta.Translation.X;
+                source.RenderTransform = ctv;
+                double current = ((screenCoords.X + source.ActualWidth / 2) - low) / (high - low);
+                mediaPlayer.Volume = current;
+                volumeText.Text = current.ToString("0.0");
+            }
+            ModifyVolumeIcon();
+        }
+
+        /**
+         * Modifies Volume icon by the current Level
+         */
+        private void ModifyVolumeIcon()
+        {
+            if (mediaPlayer.Volume < 0.1)
+            {
+                volume.Text = "\xE992";
+            }
+            else if (mediaPlayer.Volume >= 0.1 && mediaPlayer.Volume < 0.3)
+            {
+                volume.Text = "\xE993";
+            }
+            else if (mediaPlayer.Volume >= 0.3 && mediaPlayer.Volume < 0.6)
+            {
+                volume.Text = "\xE994";
+            }
+            else
+            {
+                volume.Text = "\xE995";
             }
         }
     }
