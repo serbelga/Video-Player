@@ -25,10 +25,10 @@
         </CommandBar>
         <Grid x:Name="controlsPanel" HorizontalAlignment="Center" Height="402" Margin="0,98,0,0" VerticalAlignment="Top" Background="#7F000000" MinWidth="320" MaxWidth="2100" Width="962">
             <TextBlock x:Name="volumeTextBlock" HorizontalAlignment="Left" Margin="395,62,0,0" Text="Volumen" TextWrapping="Wrap" VerticalAlignment="Top" Foreground="White"/>
-            <Image x:Name="speed" HorizontalAlignment="Center" Height="99" Margin="0,200,0,0" VerticalAlignment="Top" Width="100" Source="/Assets/Sin título-1.png" ManipulationDelta="Speed_ManipulationDelta"/>
+            <Image x:Name="speed" HorizontalAlignment="Center" Height="99" Margin="0,205,0,0" VerticalAlignment="Top" Width="100" Source="/Assets/Sin título-1.png" ManipulationDelta="Speed_ManipulationDelta"/>
             <TextBlock x:Name="volume" Text="&#xE994;" FontFamily="Segoe MDL2 Assets" HorizontalAlignment="Center" VerticalAlignment="Top" FontSize="72" ManipulationDelta="Volume_ManipulationDelta" Foreground="#FFD4D4D4" Margin="0,87,0,0"></TextBlock>
-            <TextBlock x:Name="volumeText" HorizontalAlignment="Center" Margin="0,159,0,0" Text="0.5" TextWrapping="Wrap" VerticalAlignment="Top" TextAlignment="Center" FocusVisualPrimaryBrush="Black" FontFamily="Segoe UI" FontWeight="Bold" FontSize="14" Foreground="White"/>
-            <TextBlock x:Name="speedText" HorizontalAlignment="Center" Margin="0,304,0,0" Text="1.0x" TextWrapping="Wrap" VerticalAlignment="Top" TextAlignment="Center" FocusVisualPrimaryBrush="Black" FontFamily="Segoe UI" FontWeight="Bold" FontSize="14" Foreground="White"/>
+            <TextBlock x:Name="volumeText" HorizontalAlignment="Center" Margin="0,63,0,0" Text="0.5" TextWrapping="Wrap" VerticalAlignment="Top" TextAlignment="Center" FocusVisualPrimaryBrush="Black" FontFamily="Segoe UI" FontWeight="Bold" FontSize="14" Foreground="White"/>
+            <TextBlock x:Name="speedText" HorizontalAlignment="Center" Margin="0,180,0,0" Text="1.0x" TextWrapping="Wrap" VerticalAlignment="Top" TextAlignment="Center" FocusVisualPrimaryBrush="Black" FontFamily="Segoe UI" FontWeight="Bold" FontSize="14" Foreground="White"/>
             <TextBlock x:Name="speedTextBlock" HorizontalAlignment="Left" Margin="395,180,0,0" Text="Velocidad" TextWrapping="Wrap" VerticalAlignment="Top" Foreground="White"/>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="962"/>
